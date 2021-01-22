@@ -1,125 +1,211 @@
-var Engine = Matter.Engine,
-    World = Matter.World,
-    Events = Matter.Events,
-    Bodies = Matter.Bodies; 
-var particles = [];
-var plinkos = [];
-var divisions =[];
-var particle;
+const Engine = Matter.Engine;
+const World= Matter.World;
+const Bodies = Matter.Bodies;
+const Constraint = Matter.Constraint;
 
-var divisionHeight=300;
-var score =0;
-var count = 0;
-var gameState ="start";
+var base1,base2,groundObj;
+var boxObj1;
+var bgImg;
+var slingshotObj,polygon
+var bg = "light.jpg";
+var score = 0;
+var backgroundImg
+
+
+function preload() {
+bgImg = loadImage("bg.jpg")
+polyImg = loadImage("polygon.png")
+getBackgroundImg();
+}
 
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(1300,600);
   engine = Engine.create();
   world = engine.world;
-  ground = new Ground(width/2,height,width,20);
 
-   for (var k = 0; k <=width; k = k + 80) {
-     divisions.push(new Divisions(k, height-divisionHeight/2, 10, divisionHeight));
-   }
-    for (var j = 75; j <=width; j=j+50) {
-       plinkos.push(new Plinko(j,75));
-    }
+  groundObj = new ground(600,600,1400,20);
+  base1 = new ground(500, 400, 400, 10);
+  base2 = new ground(1000, 300, 400, 10);
 
-    for (var j = 50; j <=width-10; j=j+50) {
-        plinkos.push(new Plinko(j,175));
-    }
+  boxObj1 = new box1(500,300,40,40);
+  boxObj2 = new box1(450,300,40,40);
+  boxObj3 = new box1(400,300,40,40);
+  boxObj4 = new box1(550,300,40,40);
+  boxObj5 = new box1(600,300,40,40);
 
-    for (var j = 75; j <=width; j=j+50) {
-        plinkos.push(new Plinko(j,275));
-    }
+  boxObj6 = new box2(425,250,40,40);
+  boxObj7 = new box2(525,250,40,40);
+  boxObj8 = new box2(475,250,40,40);
+  boxObj9 = new box2(575,250,40,40);
 
-    for (var j = 50; j <=width-10; j=j+50) {
-        plinkos.push(new Plinko(j,375));
-    }
-    
-}
+  boxObj10 = new box3(500,200,40,40);
+  boxObj11 = new box3(450,200,40,40);
+  boxObj12 = new box3(550,200,40,40);
+
+  boxObj13 = new box4(475,150,40,40);
+  boxObj14 = new box4(525,150,40,40);
+
+  boxObj15 = new box5(500,100,40,40);
+
+
+  boxObj16 = new box1(1000,200,40,40);
+  boxObj17 = new box1(950,200,40,40);
+  boxObj18 = new box1(900,200,40,40);
+  boxObj19 = new box1(1050,200,40,40);
+  boxObj20 = new box1(1100,200,40,40);
+
+  boxObj21 = new box2(925,150,40,40);
+  boxObj22 = new box2(1025,150,40,40);
+  boxObj23 = new box2(975,150,40,40);
+  boxObj24 = new box2(1075,150,40,40);
+
+  boxObj25 = new box3(1000,100,40,40);
+  boxObj26 = new box3(950,100,40,40);
+  boxObj27 = new box3(1050,100,40,40);
+
+  boxObj28 = new box4(975,50,40,40);
+  boxObj29 = new box4(1025,50,40,40);
+
+  boxObj30 = new box5(1000,0,40,40);
+
+  
  
+  var options = {
+    restitution:0.5,
+    friction:0.1,
+    density:0.4
+}
+polygon = Bodies.circle(50,200,20,options);
+World.add(world,polygon);
+
+  slingshotObj = new slingshot(this.polygon,{x:100,y:200});
+
+}
+
 function draw() {
-  background("black");
-  textSize(35)
-  text("Score : "+score,20,40);
-  fill("white");
-  //text(mouseX + "," + mouseY, 20, 50);
-  textSize(35)
-  text(" 500 ", 5, 550);
-  text(" 500 ", 80, 550);
-  text(" 500 ", 160, 550);
-  text(" 500 ", 240, 550);
-  text(" 100 ", 320, 550);
-  text(" 100 ", 400, 550);
-  text(" 100 ", 480, 550);
-  text(" 200 ", 560, 550);
-  text(" 200 ", 640, 550);
-  text(" 200 ", 720, 550);
+
+  if(backgroundImg)
+  background(backgroundImg);
+
+  background(225);  
   Engine.update(engine);
-  ground.display();
-  
-  if ( gameState =="end") {
-    
-    textSize(100);
-    text("GameOver", 150, 250);
-    //return
-  }
 
-  
-
-  
-
-  for (var i = 0; i < plinkos.length; i++) {
-     plinkos[i].display();  
-  }
  
-    if(particle!=null)
-    {
-       particle.display();
-        
-        if (particle.body.position.y>760)
-        {
-              if (particle.body.position.x < 300) 
-              {
-                  score=score+500;      
-                  particle=null;
-                  if ( count>= 5) gameState ="end";                          
-              }
-
-
-              else if (particle.body.position.x < 600 && particle.body.position.x > 301 ) 
-              {
-                    score = score + 100;
-                    particle=null;
-                    if ( count>= 5) gameState ="end";
-
-              }
-              else if (particle.body.position.x < 900 && particle.body.position.x > 601 )
-              {
-                    score = score + 200;
-                    particle=null;
-                    if ( count>= 5)  gameState ="end";
-
-              }      
-              
-        }
   
-      }
+  imageMode(CENTER);
+  image(polyImg,polygon.position.x,polygon.position.y,50,50);
 
-   for (var k = 0; k < divisions.length; k++) 
-   {
-     divisions[k].display();
-   }
+  slingshotObj.display();
+  groundObj.display();
+  base1.display();
+  base2.display();
+
+  
+  
+  boxObj1.display();
+  boxObj2.display();
+  boxObj3.display();
+  boxObj4.display();
+  boxObj5.display();
+  boxObj6.display();
+  boxObj7.display();
+  boxObj8.display();
+  boxObj9.display();
+  boxObj10.display();
+  boxObj11.display();
+  boxObj12.display();
+  boxObj13.display();
+  boxObj14.display();
+  boxObj15.display();
+
+  boxObj16.display();
+  boxObj17.display();
+  boxObj18.display();
+  boxObj19.display();
+  boxObj20.display();
+  boxObj21.display();
+  boxObj22.display();
+  boxObj23.display();
+  boxObj24.display();
+  boxObj25.display();
+  boxObj26.display();
+  boxObj27.display();
+  boxObj28.display();
+  boxObj29.display();
+  boxObj30.display();
+
  
+  boxObj1.score();
+  boxObj2.score();
+  boxObj3.score();
+  boxObj4.score();
+  boxObj5.score();
+  boxObj6.score();
+  boxObj7.score();
+  boxObj8.score();
+  boxObj9.score();
+  boxObj10.score();
+  boxObj11.score();
+  boxObj12.score();
+  boxObj13.score();
+  boxObj14.score();
+  boxObj15.score();
+
+  boxObj16.score();
+  boxObj17.score();
+  boxObj18.score();
+  boxObj19.score();
+  boxObj2.score();
+  boxObj21.score();
+  boxObj22.score();
+  boxObj23.score();
+  boxObj24.score();
+  boxObj25.score();
+  boxObj26.score();
+  boxObj27.score();
+  boxObj28.score();
+  boxObj29.score();
+  boxObj30.score();
+
+  drawSprites();
+
+  textSize(25);
+  fill("red");
+  
+  text("Score  " + score, 800, 40)
+  text("Tower Siege - 3 : by Rohini ",450,50);
+  text("Press space to have another chance ",600,500);
+
 }
 
+function mouseDragged(){
+  Matter.Body.setPosition(this.polygon, { x: mouseX, y: mouseY });
+}
 
-function mousePressed()
-{
-  if(gameState!=="end")
-  {
-      count++;
-     particle=new Particle(mouseX, 10, 10, 10); 
-  }   
+function mouseReleased(){
+  slingshotObj.fly();
+}
+
+function keyPressed() {
+  if (keyCode === 32) {
+    Matter.Body.setPosition(this.polygon,{x:200,y:200})
+    slingshotObj.attach(this.polygon);
+  }
+}
+
+async function getBackgroundImg(){
+  var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Kolkata");
+  var responseJSON = await response.json();
+
+  var datetime = responseJSON.datetime;
+  var hour = datetime.slice(11,13);
+  
+  if(hour>=6 && hour<=18){
+      bg = "light.jpg";
+  }
+  else{
+    bg = "dark.jpg";
+}
+backgroundImg = loadImage(bg);
+
 }
